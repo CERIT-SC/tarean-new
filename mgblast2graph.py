@@ -63,13 +63,12 @@ def filterBlastEntries(blastEntries):
 	... BlastEntry(query = 1, subject = 2, weight = None, q_length = None, 
 	...			   q_start = None, q_end = None, s_length = None, s_start = None, 
 	...			   s_end = None, sign = None)]
+
 	>>> entries = filterBlastEntries(entries)
 	>>> len(entries)
 	1
-	>>> entries[0].query
-	1
-	>>> entries[0].subject
-	2
+	>>> entries[0][:2]
+	(1, 2)
 
 	"""
 
@@ -89,12 +88,16 @@ def filterBlastEntries(blastEntries):
 if __name__ == '__main__':
 	"""Run the code on sample data"""
 
+	#doctesting
+	import doctest
+	res = doctest.testmod()
+	if res.failed != 0:
+		sys.exit(1)
+
+	#set params
 	params = {}
 	inputFolder = "input-data/"
 	params["in_blastFile"] = inputFolder + "blast.csv"
 	params["in_seqFile"] = inputFolder + "reads-fas"
 
 	mgblast2graph(**params)
-
-	import doctest
-	doctest.testmod()
