@@ -26,7 +26,9 @@ def loadBlastData(blastFileName):
 	result = []
 	with open(blastFileName, "r", encoding = "utf8") as file:
 		for line in file:
-			values = line[:-1].split("\t")
+			if line[-1] == "\n":
+				line = line[:-1]
+			values = line.split("\t")
 			entry = BlastEntry(
 					query    = int(values[0]),
 					subject  = int(values[1]),
