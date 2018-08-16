@@ -19,12 +19,20 @@ class FileError(Exception): pass
 
 ## FUNCTIONS ##
 
-def mgblast2graph(blastFileName, seqFileName):
+def mgblast2graph(blastFileName, seqFileName,
+				  paired = True):
 	blastEntries = loadBlastData(blastFileName)
 	blastEntries = filterBlastEntries(blastEntries)
 	sequences = loadSequences(seqFileName)
 
+	# compute pair complettness index before sampling
+	if paired:
+		pairCompletnessIndex = getPairCompletnessIndex(sequences)
+	else:
+		pairCompletnessIndex = 0
 
+	
+		
 
 def loadBlastData(blastFileName):
 	"""Loads data from blast file"""
@@ -119,6 +127,32 @@ def loadSequences(seqFileName):
 	return result
 
 
+def getPairCompletnessIndex(sequences):
+	"""Compute portion of broken read pairs
+
+	P = Nc/(Nc + Ni)
+	P - pair completness index
+	Nc - number of complete read pairs
+	Ni - number of broken pairs
+	"""
+
+	# first we count occurence of the same sequence description
+	# while ignoring last digit of the description, I don't know why it was
+	# like that in the original script
+	nameCount = collections.defaultdict(lambda: 0)
+	for sequence in sequences:
+		nameCount[sequence.description[:-1]] += 1
+
+	# second, we count occurences of the amounts computed in previous step
+	# like: how many times we get 1 occurence, how many 2 occurences ...
+	occurenceCount = collections.defaultdict(lambda: 0)
+	for counts in nameCount.values():
+		occurenceCount[counts] += 1
+
+	# the result is 1 - number of occurences that has happenec only once
+	# divided by sum of all occurences, that has happened any amount of times
+	return 1 - occurenceCount[1]/sum(occurenceCount.values())
+
 
 
 
@@ -138,4 +172,3 @@ if __name__ == '__main__':
 	params["seqFileName"] = inputFolder + "reads.fas"
 
 	mgblast2graph(**params)
-	
