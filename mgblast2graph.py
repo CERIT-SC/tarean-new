@@ -5,6 +5,7 @@
 import sys
 import collections
 
+## TYPE DEFINITIONS ##
 
 # BLASTn output format 6: http://www.metagenomics.wiki/tools/blast/blastn-output-format-6
 BlastEntry = collections.namedtuple("BlastEntry", "query subject weight "
@@ -15,6 +16,8 @@ Sequence = collections.namedtuple("Sequence", "description sequence")
 
 class FileError(Exception): pass
 
+
+## FUNCTIONS ##
 
 def mgblast2graph(blastFileName, seqFileName):
 	blastEntries = loadBlastData(blastFileName)
