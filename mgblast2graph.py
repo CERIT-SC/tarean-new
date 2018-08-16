@@ -11,12 +11,15 @@ BlastEntry = collections.namedtuple("BlastEntry", "query subject weight "
 												  "q_length q_start q_end " 
 												  "s_length s_start s_end sign")
 
+Sequence = collections.namedtuple("Sequence", "description sequence")
+
+class FileError(Exception): pass
 
 
-def mgblast2graph(in_blastFile, in_seqFile):
-	blastEntries = loadBlastData(in_blastFile)
+def mgblast2graph(blastFileName, seqFileName):
+	blastEntries = loadBlastData(blastFileName)
 	blastEntries = filterBlastEntries(blastEntries)
-
+	sequences = loadSequences(seqFileName)
 
 
 
@@ -86,6 +89,35 @@ def filterBlastEntries(blastEntries):
 	return filteredEntries
 
 
+def loadSequences(seqFileName):
+	"""Loads sequences from FASTA file"""
+
+	result = []
+	with open(seqFileName, "r", encoding = "utf8") as file:
+		while True:
+			#get annotation
+			line1 = file.readline().strip()
+			if len(line1) == 0: break
+			if line1[0] != ">" or len(line1) == 1:
+				raise FileError("Broken file structure")
+
+			#get sequence data
+			line2 = file.readline().strip()
+			if len(line2) == 0:
+				raise FileError("Broken file structure")
+
+			#ACGT test
+			letters = set(line2)
+			if letters - {"A", "C", "G", "T"}:
+				raise FileError("Incorrect sequence data")
+
+			result.append(Sequence(description = line1[1:], sequence = line2))
+
+	return result
+
+
+
+
 
 if __name__ == '__main__':
 	"""Run the code on sample data"""
@@ -99,7 +131,8 @@ if __name__ == '__main__':
 	#set params
 	params = {}
 	inputFolder = "input-data/"
-	params["in_blastFile"] = inputFolder + "blast.csv"
-	params["in_seqFile"] = inputFolder + "reads-fas"
+	params["blastFileName"] = inputFolder + "blast.csv"
+	params["seqFileName"] = inputFolder + "reads.fas"
 
 	mgblast2graph(**params)
+	
