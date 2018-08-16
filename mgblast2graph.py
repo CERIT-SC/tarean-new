@@ -52,8 +52,8 @@ def loadBlastData(blastFileName):
 
 
 def filterBlastEntries(blastEntries):
-	"""
-	Filteres duplicated entries.
+	"""Filteres duplicated entries.
+	
 	Since both query and subject references same set of sequences,
 	same number is considered same sequence no matter whether it is saved in
 	query or subject field.
