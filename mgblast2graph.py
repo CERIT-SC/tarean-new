@@ -7,6 +7,8 @@ import collections
 import math
 import random
 
+import igraph
+
 ## TYPE DEFINITIONS ##
 
 # BLASTn output format 6: http://www.metagenomics.wiki/tools/blast/blastn-output-format-6
@@ -47,6 +49,10 @@ def loadBlastData(blastFileName):
 			if line[-1] == "\n":
 				line = line[:-1]
 			values = line.split("\t")
+
+			if values[11] not in {"+", "-"}:
+				raise FileError("Incorrect sign in blast file")
+
 			entry = BlastEntry(
 					query    = int(values[0]),
 					subject  = int(values[1]),
@@ -60,7 +66,7 @@ def loadBlastData(blastFileName):
 					s_start  = int(values[7]),
 					s_end    = int(values[8]),
 
-					sign     = values[11]
+					sign     = +1 if values[11] == "+" else -1
 				)
 			result.append(entry)
 	return result
