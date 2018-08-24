@@ -4,6 +4,8 @@
 
 import sys
 import collections
+import math
+import random
 
 ## TYPE DEFINITIONS ##
 
@@ -20,6 +22,7 @@ class FileError(Exception): pass
 ## FUNCTIONS ##
 
 def mgblast2graph(blastFileName, seqFileName,
+				  maxSampleVertices, maxSampleEdges,
 				  paired = True):
 	blastEntries = loadBlastData(blastFileName)
 	blastEntries = filterBlastEntries(blastEntries)
@@ -31,7 +34,8 @@ def mgblast2graph(blastFileName, seqFileName,
 	else:
 		pairCompletnessIndex = 0
 
-	
+	sequences, blastEntries = createSample(sequences, blastEntries, maxSampleVertices, maxSampleEdges)
+
 		
 
 def loadBlastData(blastFileName):
@@ -154,6 +158,48 @@ def getPairCompletnessIndex(sequences):
 	return 1 - occurenceCount[1]/sum(occurenceCount.values())
 
 
+def createSample(sequences, blastEntries, maxVertices, maxEdges):
+	"""Samples input data if they are too large"""
+
+	vertices = len(sequences)
+	edges = len(blastEntries)
+
+	#check whether sampling is necessary
+	if maxVertices > vertices and maxEdges > edges:
+		return sequences, blastEntries
+
+	sampleSize = estimateSampleSize(vertices, edges, maxVertices, maxEdges)
+	sequences = random.sample(sequences, sampleSize)
+
+	filteredEntries = []
+	seqNumbers = {int(seq.description) for seq in sequences}
+	for blastEntry in blastEntries:
+		if (blastEntry.query in seqNumbers) and (blastEntry.subject in seqNumbers):
+			filteredEntries.append(blastEntry)
+
+	return sequences, filteredEntries
+
+
+def estimateSampleSize(vertices, edges, maxVertices, maxEdges):
+	"""Estimates sample size for graph"""
+
+	# I think this whole function ca be simplified just to:
+	#	result = vertices if vertices <= maxVertices else maxVertices
+	d = (2 * edges)/(vertices * (vertices - 1))
+	eEst = (maxVertices * (maxVertices - 1) * d)/2
+	nEst = (d + math.sqrt((d ** 2) + 8 * d * maxEdges))/(2 * d)
+
+	if eEst >= maxEdges:
+		N = round(nEst)
+		E = round((N * (N - 1) * d)/2)
+
+	if nEst >= maxVertices:
+		N = maxVertices
+		E = round((N * (N - 1) * d)/2)
+
+	return N
+
+
 
 
 if __name__ == '__main__':
@@ -170,5 +216,7 @@ if __name__ == '__main__':
 	inputFolder = "input-data/"
 	params["blastFileName"] = inputFolder + "blast.csv"
 	params["seqFileName"] = inputFolder + "reads.fas"
+	params["maxSampleVertices"] = 40000
+	params["maxSampleEdges"] = 20_000_000
 
 	mgblast2graph(**params)
