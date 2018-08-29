@@ -38,6 +38,9 @@ def mgblast2graph(blastFileName, seqFileName,
 
 	sequences, blastEntries = createSample(sequences, blastEntries, maxSampleVertices, maxSampleEdges)
 
+	graph = createGraph(sequences, blastEntries)
+
+
 		
 
 def loadBlastData(blastFileName):
@@ -204,6 +207,18 @@ def estimateSampleSize(vertices, edges, maxVertices, maxEdges):
 		E = round((N * (N - 1) * d)/2)
 
 	return N
+
+
+def createGraph(sequences, blastEntries):
+	graph = igraph.Graph(directed = False)
+
+	for seq in sequences:
+		graph.add_vertex(name = seq.description)
+
+	for entry in blastEntries:
+		graph.add_edge(str(entry.query), str(entry.subject), weight = entry.weight, sign = entry.sign)
+
+	return graph
 
 
 
