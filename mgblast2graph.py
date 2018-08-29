@@ -210,6 +210,9 @@ def estimateSampleSize(vertices, edges, maxVertices, maxEdges):
 
 
 def createGraph(sequences, blastEntries):
+	"""Creates graph where vertices are sequences (their names)
+	and edges are created from blast entries"""
+
 	graph = igraph.Graph(directed = False)
 
 	for seq in sequences:
