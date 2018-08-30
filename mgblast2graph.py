@@ -37,8 +37,8 @@ def mgblast2graph(blastFileName, seqFileName,
 		pairCompletnessIndex = 0
 
 	sequences, blastEntries = createSample(sequences, blastEntries, maxSampleVertices, maxSampleEdges)
-
 	graph = createGraph(sequences, blastEntries)
+	createLayout(graph)
 
 
 		
@@ -222,6 +222,17 @@ def createGraph(sequences, blastEntries):
 		graph.add_edge(str(entry.query), str(entry.subject), weight = entry.weight, sign = entry.sign)
 
 	return graph
+
+
+def createLayout(graph):
+	if graph.ecount() < 2_000_000:
+		#missing OGDF computation
+		layout = graph.layout_fruchterman_reingold_3d()
+	else:
+		layout = graph.layout_fruchterman_reingold_3d()
+
+	print([l for l in layout])
+
 
 
 
