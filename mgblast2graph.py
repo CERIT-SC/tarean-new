@@ -38,7 +38,7 @@ def mgblast2graph(blastFileName, seqFileName,
 
 	sequences, blastEntries = createSample(sequences, blastEntries, maxSampleVertices, maxSampleEdges)
 	graph = createGraph(sequences, blastEntries)
-	createLayout(graph)
+	layout = createLayout(graph)
 
 
 		
@@ -226,12 +226,18 @@ def createGraph(sequences, blastEntries):
 
 def createLayout(graph):
 	if graph.ecount() < 2_000_000:
-		#missing OGDF computation
+		# missing OGDF computation
+		# original script methods.R line 921, 922
+		# ignored for now, because of the need to create interface for C++
+		# ogdf library
 		layout = graph.layout_fruchterman_reingold_3d()
 	else:
 		layout = graph.layout_fruchterman_reingold_3d()
 
-	print([l for l in layout])
+	# original script saves graph and layout to *.GL file here
+	# ommiting for now
+
+	return layout
 
 
 
