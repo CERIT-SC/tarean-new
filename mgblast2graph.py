@@ -39,7 +39,7 @@ def mgblast2graph(blastFileName, seqFileName,
 	sequences, blastEntries = createSample(sequences, blastEntries, maxSampleVertices, maxSampleEdges)
 	graph = createGraph(sequences, blastEntries)
 	layout = createLayout(graph)
-
+	saveGraphPicture(graph, layout, "picture.png", "thumbnail.png")
 
 		
 
@@ -240,6 +240,10 @@ def createLayout(graph):
 	return layout
 
 
+def saveGraphPicture(graph, layout, pictureName, thumbnailName):
+	# print(layout)
+	# plot = igraph.plot()
+	pass
 
 
 
