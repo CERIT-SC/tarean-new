@@ -251,6 +251,11 @@ def saveGraphPicture(graph, layout, pictureName, thumbnailName):
 	# 1) install cairo library (using standard package manager)
 	# 2) python interface for cairo - cairocffi: pip install cairocffi
 
+	if ".png" != pictureName[-4:]:
+		raise ValueError("Picture must be PNG")
+	if ".png" != thumbnailName[-4:]:
+		raise ValueError("Thumbnail must be PNG")
+
 	igraph.plot(graph,
 				layout = layout,
 				target = pictureName,
