@@ -26,6 +26,7 @@ class FileError(Exception): pass
 
 def mgblast2graph(blastFileName, seqFileName,
 				  maxSampleVertices, maxSampleEdges,
+				  pictureName, thumbnailName,
 				  paired = True):
 	blastEntries = loadBlastData(blastFileName)
 	blastEntries = filterBlastEntries(blastEntries)
@@ -41,7 +42,7 @@ def mgblast2graph(blastFileName, seqFileName,
 										   maxSampleVertices, maxSampleEdges)
 	graph = createGraph(sequences, blastEntries)
 	layout = createLayout(graph)
-	saveGraphPicture(graph, layout, "picture.png", "thumbnail.png")
+	saveGraphPicture(graph, layout, pictureName, thumbnailName)
 
 		
 
@@ -283,9 +284,11 @@ if __name__ == '__main__':
 	#set params
 	params = {}
 	inputFolder = "input-data/"
-	params["blastFileName"] = inputFolder + "blast.csv"
-	params["seqFileName"] = inputFolder + "reads.fas"
+	params["blastFileName"]     = inputFolder + "blast.csv"
+	params["seqFileName"]       = inputFolder + "reads.fas"
 	params["maxSampleVertices"] = 40000
-	params["maxSampleEdges"] = 20_000_000
+	params["maxSampleEdges"]    = 20_000_000
+	params["pictureName"]       = "output-data/graphPicture.png"
+	params["thumbnailName"]     = "output-data/graphThumbnail.png"
 
 	mgblast2graph(**params)
