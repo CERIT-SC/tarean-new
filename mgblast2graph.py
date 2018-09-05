@@ -8,6 +8,7 @@ import math
 import random
 
 import igraph
+from PIL import Image	# Pillow library
 
 ## TYPE DEFINITIONS ##
 
@@ -230,9 +231,9 @@ def createLayout(graph):
 		# original script methods.R line 921, 922
 		# ignored for now, because of the need to create interface for C++
 		# ogdf library
-		layout = graph.layout_fruchterman_reingold_3d()
+		layout = graph.layout_fruchterman_reingold()
 	else:
-		layout = graph.layout_fruchterman_reingold_3d()
+		layout = graph.layout_fruchterman_reingold()
 
 	# original script saves graph and layout to *.GL file here
 	# ommiting for now
@@ -241,9 +242,29 @@ def createLayout(graph):
 
 
 def saveGraphPicture(graph, layout, pictureName, thumbnailName):
-	# print(layout)
-	# plot = igraph.plot()
-	pass
+
+	# Plotting has to be setup:
+	# 1) install cairo library (using standard package manager)
+	# 2) python interface for cairo - cairocffi: pip install cairocffi
+
+	igraph.plot(graph,
+				layout = layout,
+				target = pictureName,
+				bbox = (900, 900), 
+				vertex_size = 2,
+				vertex_shape = "circle",
+				vertex_color = "#000000A0",
+				edge_color = "#00000040",
+				edge_curved = False,
+				edge_width = 1,
+				vertex_label = None,
+				vertex_frame_color = None)
+
+	with Image.open(pictureName) as image:
+		thumbnail = image.resize((100, 100), Image.ANTIALIAS)
+		thumbnail.save(thumbnailName)
+
+
 
 
 
