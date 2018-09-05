@@ -37,7 +37,8 @@ def mgblast2graph(blastFileName, seqFileName,
 	else:
 		pairCompletnessIndex = 0
 
-	sequences, blastEntries = createSample(sequences, blastEntries, maxSampleVertices, maxSampleEdges)
+	sequences, blastEntries = createSample(sequences, blastEntries, 
+										   maxSampleVertices, maxSampleEdges)
 	graph = createGraph(sequences, blastEntries)
 	layout = createLayout(graph)
 	saveGraphPicture(graph, layout, "picture.png", "thumbnail.png")
@@ -220,7 +221,8 @@ def createGraph(sequences, blastEntries):
 		graph.add_vertex(name = seq.description)
 
 	for entry in blastEntries:
-		graph.add_edge(str(entry.query), str(entry.subject), weight = entry.weight, sign = entry.sign)
+		graph.add_edge(str(entry.query), str(entry.subject), 
+					   weight = entry.weight, sign = entry.sign)
 
 	return graph
 
