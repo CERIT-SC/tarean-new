@@ -244,6 +244,7 @@ def createLayout(graph):
 
 
 def saveGraphPicture(graph, layout, pictureName, thumbnailName):
+	"""Saves graph as a picture with it's thumbnail"""
 
 	# Plotting has to be setup:
 	# 1) install cairo library (using standard package manager)
