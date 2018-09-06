@@ -27,19 +27,17 @@ class FileError(Exception): pass
 def mgblast2graph(blastFileName, seqFileName,
 				  maxSampleVertices, maxSampleEdges,
 				  pictureName, thumbnailName,
-				  paired = True):
+				  paired):
 	blastEntries = loadBlastData(blastFileName)
 	blastEntries = filterBlastEntries(blastEntries)
 	sequences = loadSequences(seqFileName)
 
 	# compute pair complettness index before sampling
-	if paired:
-		pairCompletnessIndex = getPairCompletnessIndex(sequences)
-	else:
-		pairCompletnessIndex = 0
+	pairCompletnessIndex = getPairCompletnessIndex(sequences) if paired else 0
 
 	sequences, blastEntries = createSample(sequences, blastEntries, 
 										   maxSampleVertices, maxSampleEdges)
+
 	graph = createGraph(sequences, blastEntries)
 	layout = createLayout(graph)
 	saveGraphPicture(graph, layout, pictureName, thumbnailName)
@@ -295,5 +293,6 @@ if __name__ == '__main__':
 	params["maxSampleEdges"]    = 20_000_000
 	params["pictureName"]       = "output-data/graphPicture.png"
 	params["thumbnailName"]     = "output-data/graphThumbnail.png"
+	params["paired"]            = True
 
 	mgblast2graph(**params)
