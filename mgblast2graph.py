@@ -49,7 +49,9 @@ def mgblast2graph(blastFileName, seqFileName,
 	# original script tries to make alternative spanning trees here
 	# in case that "suboptimal solution is found", ignoring for now
 
-	
+	getReorientedReads(spanningTree)
+
+	# dfs dfs dfs dfs ...
 
 		
 
@@ -294,6 +296,18 @@ def getLargestComponent(graph, blastEntries):
 
 	return biggestSubgraph, filteredEntries
 	
+
+def getReorientedReads(spanningTree):
+	edges = []
+	for edge in spanningTree.es:
+		source = int(spanningTree.vs[edge.source]["name"])
+		target = int(spanningTree.vs[edge.target]["name"])
+		sign   = edge["sign"]
+		edges.append((source, target, sign))
+
+	print(edges)
+	# maybe only vertex numbers is all that's needed
+
 
 
 if __name__ == '__main__':
