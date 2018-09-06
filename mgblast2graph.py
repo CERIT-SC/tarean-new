@@ -45,6 +45,11 @@ def mgblast2graph(blastFileName, seqFileName,
 	if not graph.is_connected():	# sequences are not filtered?
 		graph, blastEntries = getLargestComponent(graph, blastEntries)
 
+	spanningTree = graph.spanning_tree()
+	# original script tries to make alternative spanning trees here
+	# in case that "suboptimal solution is found", ignoring for now
+
+	
 
 		
 
