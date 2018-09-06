@@ -193,7 +193,7 @@ def createSample(sequences, blastEntries, maxVertices, maxEdges):
 	filteredEntries = []
 	seqNumbers = {int(seq.description) for seq in sequences}
 	for blastEntry in blastEntries:
-		if (blastEntry.query in seqNumbers) and (blastEntry.subject in seqNumbers):
+		if blastEntry.query in seqNumbers and blastEntry.subject in seqNumbers:
 			filteredEntries.append(blastEntry)
 
 	return sequences, filteredEntries
