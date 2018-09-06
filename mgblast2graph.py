@@ -42,6 +42,10 @@ def mgblast2graph(blastFileName, seqFileName,
 	layout = createLayout(graph)
 	saveGraphPicture(graph, layout, pictureName, thumbnailName)
 
+	if not graph.is_connected():	# sequences are not filtered?
+		graph, blastEntries = getLargestComponent(graph, blastEntries)
+
+
 		
 
 def loadBlastData(blastFileName):
@@ -272,7 +276,19 @@ def saveGraphPicture(graph, layout, pictureName, thumbnailName):
 		thumbnail.save(thumbnailName)
 
 
+def getLargestComponent(graph, blastEntries):
+	clusters = graph.clusters()
+	biggestSubgraph = clusters.giant()
+	
+	filteredEntries = []
+	vertexNames = {int(vertex["name"]) for vertex in biggestSubgraph.vs}
 
+	for entry in blastEntries:
+		if entry.query in vertexNames and entry.subject in vertexNames:
+			filteredEntries.append(entry)
+
+	return biggestSubgraph, filteredEntries
+	
 
 
 if __name__ == '__main__':
