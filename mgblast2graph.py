@@ -300,13 +300,15 @@ def getLargestComponent(graph, blastEntries):
 def getReorientedReads(spanningTree):
 	edges = []
 	for edge in spanningTree.es:
-		source = int(spanningTree.vs[edge.source]["name"])
-		target = int(spanningTree.vs[edge.target]["name"])
+		# if the names of the vertices are needed (which probably arent)
+		# source = int(spanningTree.vs[edge.source]["name"])
+		# target = int(spanningTree.vs[edge.target]["name"])
+		source = edge.source
+		target = edge.target
 		sign   = edge["sign"]
 		edges.append((source, target, sign))
 
 	print(edges)
-	# maybe only vertex numbers is all that's needed
 
 
 
