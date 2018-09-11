@@ -329,7 +329,7 @@ def depthFirstSearch(graph, startVertexNumber):
 
 			vertex = graph.vs[vertexNum]
 			neighbors = [(neighbor.index, vertexNum) for neighbor in vertex.neighbors()]
-			stack += neighbors
+			stack = neighbors + stack
 
 	return result
 
