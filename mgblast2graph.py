@@ -308,7 +308,31 @@ def getReorientedReads(spanningTree):
 		sign   = edge["sign"]
 		edges.append((source, target, sign))
 
-	print(edges)
+	depthSearchList = depthFirstSearch(spanningTree, 0)
+	
+
+
+def depthFirstSearch(graph, startVertexNumber):
+	"""The depth first search algorithm.
+	Returns list of tuples - (vertexNumber, parentVertexNumber)
+	"""
+
+	stack = [(startVertexNumber, startVertexNumber)]
+	visitedVertices = set()
+	result = []
+
+	while stack:
+		vertexNum, parentNum = stack.pop(0)
+		if vertexNum not in visitedVertices:
+			visitedVertices.add(vertexNum)
+			result.append((vertexNum, parentNum))
+
+			vertex = graph.vs[vertexNum]
+			neighbors = [(neighbor.index, vertexNum) for neighbor in vertex.neighbors()]
+			stack += neighbors
+
+	return result
+
 
 
 
