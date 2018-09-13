@@ -6,6 +6,7 @@ import sys
 import collections
 import math
 import random
+import copy
 
 import igraph
 from PIL import Image	# Pillow library
@@ -50,7 +51,7 @@ def mgblast2graph(blastFileName, seqFileName,
 	# original script tries to make alternative spanning trees here
 	# in case that "suboptimal solution is found", ignoring for now
 
-	getReorientedReads(spanningTree)
+	print(getNegativeEdgeVertices(spanningTree))
 
 
 
@@ -298,22 +299,20 @@ def getLargestComponent(graph, blastEntries):
 	return biggestSubgraph, filteredEntries
 	
 
-def getReorientedReads(spanningTree):
-	edges = []
-	for edge in spanningTree.es:
-		# if the names of the vertices are needed (which probably arent)
-		# source = int(spanningTree.vs[edge.source]["name"])
-		# target = int(spanningTree.vs[edge.target]["name"])
-		source = edge.source
-		target = edge.target
-		sign   = edge["sign"]
-		edges.append((source, target, sign))
+def getNegativeEdgeVertices(spanningTree):
+	result = []
 
 	for vertex, parent in depthFirstSearch(spanningTree, 0):
-		# zjistit, zda má hrana vertex-paremt záporné znaménko
-		#print(len(spanningTree.es.select(_source = vertex, _target = parent)))
-		pass
-	
+		if vertex == parent: continue	# ignoring root of the search
+
+		edge = spanningTree.es.select(_between = ((vertex,),(parent,)))[0]
+		if edge["sign"] == -1:
+			result.append(spanningTree.vs[vertex]["name"])
+		
+	return result
+
+	# POJMENOVÁNÍ JE NĚJAKÉ DIVNÉ, NĚJAK VLASTNĚ NEVÍM, CO Z TOHO CHCI
+	# POTŘEBA SE K TOMU VRÁTIT A PROMYSLET TO JEŠTĚ
 
 
 def depthFirstSearch(graph, startVertexNumber):
