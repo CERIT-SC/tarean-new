@@ -46,12 +46,13 @@ def mgblast2graph(blastFileName, seqFileName,
 		graph, blastEntries = getLargestComponent(graph, blastEntries)
 
 	spanningTree = graph.spanning_tree()
+	del graph
 	# original script tries to make alternative spanning trees here
 	# in case that "suboptimal solution is found", ignoring for now
 
 	getReorientedReads(spanningTree)
 
-	# dfs dfs dfs dfs ...
+
 
 		
 
@@ -308,7 +309,10 @@ def getReorientedReads(spanningTree):
 		sign   = edge["sign"]
 		edges.append((source, target, sign))
 
-	depthSearchList = depthFirstSearch(spanningTree, 0)
+	for vertex, parent in depthFirstSearch(spanningTree, 0):
+		# zjistit, zda má hrana vertex-paremt záporné znaménko
+		#print(len(spanningTree.es.select(_source = vertex, _target = parent)))
+		pass
 	
 
 
@@ -319,19 +323,16 @@ def depthFirstSearch(graph, startVertexNumber):
 
 	stack = [(startVertexNumber, startVertexNumber)]
 	visitedVertices = set()
-	result = []
 
 	while stack:
 		vertexNum, parentNum = stack.pop(0)
 		if vertexNum not in visitedVertices:
 			visitedVertices.add(vertexNum)
-			result.append((vertexNum, parentNum))
+			yield vertexNum, parentNum
 
 			vertex = graph.vs[vertexNum]
 			neighbors = [(neighbor.index, vertexNum) for neighbor in vertex.neighbors()]
 			stack = neighbors + stack
-
-	return result
 
 
 
