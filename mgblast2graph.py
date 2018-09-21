@@ -315,7 +315,6 @@ def getNegativeEdgeVertices(spanningTree):
 	# POTŘEBA SE K TOMU VRÁTIT A PROMYSLET TO JEŠTĚ
 
 
-# this DFS doesn't work with disconected graph, if necessary - need implementing
 def depthFirstSearch(graph, startVertexNumber):
 	"""The depth first search algorithm.
 	Returns list of tuples - (vertexNumber, parentVertexNumber)
