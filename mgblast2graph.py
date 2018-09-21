@@ -31,15 +31,14 @@ def mgblast2graph(blastFileName, seqFileName,
 				  paired):
 	blastEntries = loadBlastData(blastFileName)
 	blastEntries = filterBlastEntries(blastEntries)
-	sequences = loadSequences(seqFileName)
+	sequences    = loadSequences(seqFileName)
 
 	# compute pair complettness index before sampling
-	pairCompletnessIndex = getPairCompletnessIndex(sequences) if paired else 0
-
-	sequences, blastEntries = createSample(sequences, blastEntries, 
+	pairCompletnessIndex    = getPairCompletnessIndex(sequences) if paired else 0
+	sequences, blastEntries = createSample(sequences, blastEntries,
 										   maxSampleVertices, maxSampleEdges)
 
-	graph = createGraph(sequences, blastEntries)
+	graph  = createGraph(sequences, blastEntries)
 	layout = createLayout(graph)
 	saveGraphPicture(graph, layout, pictureName, thumbnailName)
 
@@ -47,7 +46,6 @@ def mgblast2graph(blastFileName, seqFileName,
 		graph, blastEntries = getLargestComponent(graph, blastEntries)
 
 	spanningTree = graph.spanning_tree()
-	del graph
 	# original script tries to make alternative spanning trees here
 	# in case that "suboptimal solution is found", ignoring for now
 
