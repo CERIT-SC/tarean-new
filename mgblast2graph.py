@@ -49,7 +49,7 @@ def mgblast2graph(blastFileName, seqFileName,
 	# original script tries to make alternative spanning trees here
 	# in case that "suboptimal solution is found", ignoring for now
 
-	neSeqNames = getNegativeEdgeSeqNames(spanningTree)
+	reverseComplements = [int(edge["name"]) for edge in getNegativeEdgeVertices(spanningTree)]
 
 
 		
@@ -296,7 +296,7 @@ def getLargestComponent(graph, blastEntries):
 	return biggestSubgraph, filteredEntries
 	
 
-def getNegativeEdgeSeqNames(spanningTree):
+def getNegativeEdgeVertices(spanningTree):
 	result = []
 
 	for vertex, parent in depthFirstSearch(spanningTree, 0):
@@ -304,7 +304,7 @@ def getNegativeEdgeSeqNames(spanningTree):
 
 		edge = spanningTree.es.select(_between = ((vertex,),(parent,)))[0]
 		if edge["sign"] == -1:
-			result.append(spanningTree.vs[vertex]["name"])
+			result.append(spanningTree.vs[vertex])
 		
 	return result
 
