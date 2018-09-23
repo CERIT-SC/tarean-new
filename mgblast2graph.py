@@ -297,6 +297,10 @@ def getLargestComponent(graph, blastEntries):
 	
 
 def getNegativeEdgeVertices(spanningTree):
+	"""Returns a list of vertices, that are connected to a predecessor vertex
+	with a negative edge.
+	"""
+	
 	result = []
 
 	for vertex, parent in depthFirstSearch(spanningTree, 0):
