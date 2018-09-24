@@ -55,6 +55,8 @@ def mgblast2graph(blastFileName, seqFileName,
 	reverseComplements = {int(edge["name"]) for edge in getNegativeEdgeVertices(spanningTree)}
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
 
+	sequences = alterSequences(sequences, reverseComplements, notfit)
+
 	# escore is sum of entries with sign 1 divided by all entries
 	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
 
@@ -384,6 +386,24 @@ def switchReversed(blastEntries, reverseComplements):
 	return similarityTable, notfit
 
 
+def alterSequences(sequences, reverseComplements, notfit):
+	"""Removes nofit sequences and reverses reverse complements"""
+
+	result = []
+	complMap = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
+
+	for seq in sequences:
+		seqID = int(seq.description)
+		seqData = seq.sequence
+
+		if seqID in notfit: continue
+		if seqID in reverseComplements:
+			bases = list(seqData)
+			bases = reversed((complMap[base] for base in bases))
+			seqData = "".join(bases)
+
+		result.append(Sequence(str(seqID), seqData))
+	return result
 
 
 
