@@ -18,6 +18,8 @@ BlastEntry = collections.namedtuple("BlastEntry", "query subject weight "
 												  "q_length q_start q_end " 
 												  "s_length s_start s_end sign")
 
+SimilarityEntry = collections.namedtuple("SimilarityEntry", "seq1 seq2 sign")
+
 Sequence = collections.namedtuple("Sequence", "description sequence")
 
 class FileError(Exception): pass
@@ -49,8 +51,9 @@ def mgblast2graph(blastFileName, seqFileName,
 	# original script tries to make alternative spanning trees here
 	# in case that "suboptimal solution is found", ignoring for now
 
-	reverseComplements = [int(edge["name"]) for edge in getNegativeEdgeVertices(spanningTree)]
-
+	reverseComplements = {int(edge["name"]) for edge in getNegativeEdgeVertices(spanningTree)}
+	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
+	
 
 		
 
@@ -330,6 +333,38 @@ def depthFirstSearch(graph, startVertexNumber):
 			vertex = graph.vs[vertexNum]
 			neighbors = [(neighbor.index, vertexNum) for neighbor in vertex.neighbors()]
 			stack = neighbors + stack
+
+# the approach to find what sequences to switch is kind of weird and I think
+# there are better ways that finds better results
+# THE SOLUTION HERE YIELDS SUBOPTIMAL RESULTS
+def switchReversed(blastEntries, reverseComplements):
+	similarityTable = []
+	notfit = set()
+
+	for entry in blastEntries:
+		sign = entry.sign
+
+		queryMean = (entry.q_start + entry.q_end)/2
+		if entry.query in reverseComplements:
+			queryMean = entry.q_length - queryMean
+			sign *= -1
+
+		subjectMean = (entry.s_start + entry.s_end)/2
+		if entry.subject in reverseComplements:
+			subjectMean = entry.s_length - subjectMean
+			sign *= -1
+
+		# set new order of sequences in entry
+		if subjectMean > queryMean: 
+			seq1, seq2 = entry.subject, entry.query
+		else: 
+			seq1, seq2 = entry.query, entry.subject
+		
+		similarityTable.append(SimilarityEntry(seq1, seq2, sign))
+		if sign == -1: notfit |= {seq1, seq2}
+
+	return similarityTable, notfit
+
 
 
 
