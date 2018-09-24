@@ -68,8 +68,8 @@ def mgblast2graph(blastFileName, seqFileName,
 		"oriented_sequences": None,
 		"vcount": None,
 		"ecount": None,
-		"satellite_probability": None,
-		"satelite": None
+		"satellite_probability": None,	# can be None in original script, ignoring for now
+		"satelite": None				# can be None in original script, ignoring for now
 	}
 
 	return graphInfo
