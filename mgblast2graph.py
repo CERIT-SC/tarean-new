@@ -7,6 +7,7 @@ import collections
 import math
 import random
 import copy
+import pprint
 
 import igraph
 from PIL import Image	# Pillow library
@@ -53,8 +54,22 @@ def mgblast2graph(blastFileName, seqFileName,
 
 	reverseComplements = {int(edge["name"]) for edge in getNegativeEdgeVertices(spanningTree)}
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
-	
 
+	graphInfo = {
+		"escore": None,
+		"escore_mts": None,
+		"coverage": None,
+		"loop_index": None,
+		"pair_completness": None,
+		"graph_file": None,
+		"oriented_sequences": None,
+		"vcount": None,
+		"ecount": None,
+		"satellite_probability": None,
+		"satelite": None
+	}
+
+	return graphInfo
 		
 
 def loadBlastData(blastFileName):
@@ -389,4 +404,5 @@ if __name__ == '__main__':
 	params["thumbnailName"]     = "output-data/graphThumbnail.png"
 	params["paired"]            = True
 
-	mgblast2graph(**params)
+	result = mgblast2graph(**params)
+	pprint.pprint(result)
