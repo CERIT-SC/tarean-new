@@ -55,8 +55,11 @@ def mgblast2graph(blastFileName, seqFileName,
 	reverseComplements = {int(edge["name"]) for edge in getNegativeEdgeVertices(spanningTree)}
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
 
+	# escore is sum of entries with sign 1 divided by all entries
+	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
+
 	graphInfo = {
-		"escore": None,
+		"escore": escore,
 		"escore_mts": None,
 		"coverage": None,
 		"loop_index": None,
