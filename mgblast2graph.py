@@ -43,6 +43,8 @@ def mgblast2graph(blastFileName, seqFileName,
 
 	graph  = createGraph(sequences, blastEntries)
 	layout = createLayout(graph)
+	# original script saves graph and layout to *.GL file here
+	# ommiting for now
 	saveGraphPicture(graph, layout, pictureName, thumbnailName)
 
 	if not graph.is_connected():	# sequences are not filtered?
@@ -56,8 +58,8 @@ def mgblast2graph(blastFileName, seqFileName,
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
-	clusters = resultGraph.clusters(mode = "STRONG")
-	membership = vertexToClusterMembership(clusters)
+	clusters    = resultGraph.clusters(mode = "STRONG")
+	membership  = vertexToClusterMembership(clusters)
 
 	resultSequences = alterSequences(sequences, reverseComplements, notfit)
 	saveSequencesAndClusterData(resultSequences, resultGraph, membership, outputSeqFileName)
@@ -276,9 +278,6 @@ def createLayout(graph):
 		layout = graph.layout_fruchterman_reingold()
 	else:
 		layout = graph.layout_fruchterman_reingold()
-
-	# original script saves graph and layout to *.GL file here
-	# ommiting for now
 
 	return layout
 
