@@ -56,16 +56,17 @@ def mgblast2graph(blastFileName, seqFileName,
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
+	membership = vertexToClusterMembership(resultGraph)
 
 	resultSequences = alterSequences(sequences, reverseComplements, notfit)
-	saveSequencesAndClusterData(resultSequences, resultGraph, outputSeqFileName)
+	saveSequencesAndClusterData(resultSequences, resultGraph, membership, outputSeqFileName)
 
 	# escore is sum of entries with sign 1 divided by all entries
 	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
 
 	graphInfo = {
 		"escore": escore,
-		"escore_mts": None,
+		"escore_mts": None,	# screw this
 		"coverage": len(resultSequences)/len(sequences),
 		"loop_index": None,
 		"pair_completness": None,
@@ -428,14 +429,21 @@ def alterSequences(sequences, reverseComplements, notfit):
 	return result
 
 
-def saveSequencesAndClusterData(sequences, resultGraph, fileName):
-	"""Saves sequences with info about cluster they belong to"""
+def vertexToClusterMembership(graph):
+	"""Returns dictionary with mapping: vertexIndex -> clusterIndex"""
 
-	clusters = resultGraph.clusters(mode = "STRONG")
+	clusters = graph.clusters(mode = "STRONG")
 	membership = {}
+
 	for index, vertices in enumerate(clusters, 1):
 		for vertex in vertices:
 			membership[vertex] = index
+
+	return membership
+
+
+def saveSequencesAndClusterData(sequences, resultGraph, membership, fileName):
+	"""Saves sequences with info about cluster they belong to"""
 
 	with open(fileName, "w", encoding = "utf8") as file:
 		for seq in sequences:	# sekvence je potřeba prvně profiltrovat
