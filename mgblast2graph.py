@@ -58,7 +58,7 @@ def mgblast2graph(blastFileName, seqFileName,
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
 
 	sequences = alterSequences(sequences, reverseComplements, notfit)
-	saveSequences(sequences, outputSeqFileName)
+	saveSequencesAndClusterData(sequences, resultGraph, outputSeqFileName)
 
 	# escore is sum of entries with sign 1 divided by all entries
 	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
@@ -429,10 +429,21 @@ def alterSequences(sequences, reverseComplements, notfit):
 	return result
 
 
-def saveSequences(sequences, fileName):
-	# do souboru se do anotace ukládají i čísla vrcholů grafu
-	# potřeba prvně zkonstruovat graf
-	pass
+def saveSequencesAndClusterData(sequences, resultGraph, fileName):
+	"""Saves sequences with info about cluster they belong to"""
+
+	clusters = resultGraph.clusters(mode = "STRONG")
+	membership = {}
+	for index, vertices in enumerate(clusters, 1):
+		for vertex in vertices:
+			membership[vertex] = index
+
+	with open(fileName, "w", encoding = "utf8") as file:
+		for seq in sequences:	# sekvence je potřeba prvně profiltrovat
+			vertexIndex = resultGraph.vs.find(seq.description).index
+			clusterIndex = membership[vertexIndex]
+			file.write("".join((">", seq.description, " ", str(clusterIndex), "\n")))
+			file.write(seq.sequence + "\n")
 
 
 
