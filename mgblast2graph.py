@@ -30,7 +30,7 @@ class FileError(Exception): pass
 
 def mgblast2graph(blastFileName, seqFileName,
 				  maxSampleVertices, maxSampleEdges,
-				  pictureName, thumbnailName,
+				  pictureName, thumbnailName, outputSeqFileName,
 				  paired):
 	blastEntries = loadBlastData(blastFileName)
 	blastEntries = filterBlastEntries(blastEntries)
@@ -56,6 +56,7 @@ def mgblast2graph(blastFileName, seqFileName,
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
 
 	sequences = alterSequences(sequences, reverseComplements, notfit)
+	saveSequences(sequences, outputSeqFileName)
 
 	# escore is sum of entries with sign 1 divided by all entries
 	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
@@ -406,6 +407,12 @@ def alterSequences(sequences, reverseComplements, notfit):
 	return result
 
 
+def saveSequences(sequences, fileName):
+	# do souboru se do anotace ukládají i čísla vrcholů grafu
+	# potřeba prvně zkonstruovat graf
+	pass
+
+
 
 if __name__ == '__main__':
 	"""Run the code on sample data"""
@@ -426,6 +433,7 @@ if __name__ == '__main__':
 	params["pictureName"]       = "output-data/graphPicture.png"
 	params["thumbnailName"]     = "output-data/graphThumbnail.png"
 	params["paired"]            = True
+	params["outputSeqFileName"] = "output-data/sequences.fasta"
 
 	result = mgblast2graph(**params)
 	pprint.pprint(result)
