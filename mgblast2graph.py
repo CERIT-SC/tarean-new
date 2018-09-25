@@ -65,12 +65,13 @@ def mgblast2graph(blastFileName, seqFileName,
 	#GRAPH INFO COMPUTATION
 	# escore is sum of entries with sign 1 divided by all entries
 	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
+	coverage = len(resultSequences)/len(sequences)
 	loopIndex = max([len(cluster) for cluster in clusters])/resultGraph.vs
 
 	graphInfo = {
 		"escore"                : escore,
 		"escore_mts"            : None,	# screw this
-		"coverage"              : len(resultSequences)/len(sequences),
+		"coverage"              : coverage,
 		"loop_index"            : loopIndex,
 		"pair_completness"      : None,
 		"graph_file"            : None,
