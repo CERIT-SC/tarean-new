@@ -56,7 +56,8 @@ def mgblast2graph(blastFileName, seqFileName,
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
-	membership = vertexToClusterMembership(resultGraph)
+	clusters = resultGraph.clusters(mode = "STRONG")
+	membership = vertexToClusterMembership(clusters)
 
 	resultSequences = alterSequences(sequences, reverseComplements, notfit)
 	saveSequencesAndClusterData(resultSequences, resultGraph, membership, outputSeqFileName)
@@ -429,10 +430,9 @@ def alterSequences(sequences, reverseComplements, notfit):
 	return result
 
 
-def vertexToClusterMembership(graph):
+def vertexToClusterMembership(clusters):
 	"""Returns dictionary with mapping: vertexIndex -> clusterIndex"""
 
-	clusters = graph.clusters(mode = "STRONG")
 	membership = {}
 
 	for index, vertices in enumerate(clusters, 1):
