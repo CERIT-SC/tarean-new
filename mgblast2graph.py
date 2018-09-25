@@ -57,8 +57,8 @@ def mgblast2graph(blastFileName, seqFileName,
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
 
-	sequences = alterSequences(sequences, reverseComplements, notfit)
-	saveSequencesAndClusterData(sequences, resultGraph, outputSeqFileName)
+	resultSequences = alterSequences(sequences, reverseComplements, notfit)
+	saveSequencesAndClusterData(resultSequences, resultGraph, outputSeqFileName)
 
 	# escore is sum of entries with sign 1 divided by all entries
 	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
@@ -66,7 +66,7 @@ def mgblast2graph(blastFileName, seqFileName,
 	graphInfo = {
 		"escore": escore,
 		"escore_mts": None,
-		"coverage": None,
+		"coverage": len(resultSequences)/len(sequences),
 		"loop_index": None,
 		"pair_completness": None,
 		"graph_file": None,
@@ -394,7 +394,6 @@ def createResultGraph(similarityTable, notfit, reverseComplements):
 	"""
 
 	graph = igraph.Graph(directed = False)
-
 	vertices = {entry.seq1 for entry in similarityTable} | \
 			   {entry.seq2 for entry in similarityTable}
 	vertices -= notfit
