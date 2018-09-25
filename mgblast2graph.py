@@ -62,7 +62,7 @@ def mgblast2graph(blastFileName, seqFileName,
 	resultSequences = alterSequences(sequences, reverseComplements, notfit)
 	saveSequencesAndClusterData(resultSequences, resultGraph, membership, outputSeqFileName)
 
-	#GRAPH INFO COMPUTATION
+	# GRAPH INFO COMPUTATION
 	# escore is sum of entries with sign 1 divided by all entries
 	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
 	coverage = len(resultSequences)/len(sequences)
@@ -73,7 +73,7 @@ def mgblast2graph(blastFileName, seqFileName,
 		"escore_mts"            : None,	# screw this
 		"coverage"              : coverage,
 		"loop_index"            : loopIndex,
-		"pair_completness"      : None,
+		"pair_completness"      : pairCompletnessIndex,
 		"graph_file"            : None,
 		"oriented_sequences"    : None,
 		"vcount"                : None,
