@@ -74,10 +74,10 @@ def mgblast2graph(blastFileName, seqFileName,
 		"coverage"              : coverage,
 		"loop_index"            : loopIndex,
 		"pair_completness"      : pairCompletnessIndex,
-		"graph_file"            : None,
-		"oriented_sequences"    : None,
-		"vcount"                : None,
-		"ecount"                : None,
+		"graph_file"            : None,	# ignoring for now
+		"oriented_sequences"    : outputSeqFileName,
+		"vcount"                : len(resultGraph.vs),
+		"ecount"                : len(resultGraph.es),
 		"satellite_probability" : None,	# can be None in original script, ignoring for now
 		"satelite"              : None	# can be None in original script, ignoring for now
 	}
