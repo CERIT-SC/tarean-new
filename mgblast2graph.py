@@ -55,6 +55,8 @@ def mgblast2graph(blastFileName, seqFileName,
 	reverseComplements = {int(edge["name"]) for edge in getNegativeEdgeVertices(spanningTree)}
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
 
+	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
+
 	sequences = alterSequences(sequences, reverseComplements, notfit)
 	saveSequences(sequences, outputSeqFileName)
 
@@ -385,6 +387,26 @@ def switchReversed(blastEntries, reverseComplements):
 		if sign == -1: notfit |= {seq1, seq2}
 
 	return similarityTable, notfit
+
+def createResultGraph(similarityTable, notfit, reverseComplements):
+	"""Creates graph from vertices, that are not in nofit
+	and edges among those vertices
+	"""
+
+	graph = igraph.Graph(directed = False)
+
+	vertices = {entry.seq1 for entry in similarityTable} | \
+			   {entry.seq2 for entry in similarityTable}
+	vertices -= notfit
+	
+	for vertex in vertices:
+		graph.add_vertex(name = str(vertex), complement = vertex in reverseComplements)
+
+	for entry in similarityTable:
+		if entry.seq1 not in notfit and entry.seq2 not in notfit:
+			graph.add_edge(str(entry.seq1), str(entry.seq2), sign = entry.sign)
+	
+	return graph
 
 
 def alterSequences(sequences, reverseComplements, notfit):
