@@ -68,17 +68,17 @@ def mgblast2graph(blastFileName, seqFileName,
 	loopIndex = max([len(cluster) for cluster in clusters])/resultGraph.vs
 
 	graphInfo = {
-		"escore": escore,
-		"escore_mts": None,	# screw this
-		"coverage": len(resultSequences)/len(sequences),
-		"loop_index": loopIndex,
-		"pair_completness": None,
-		"graph_file": None,
-		"oriented_sequences": None,
-		"vcount": None,
-		"ecount": None,
-		"satellite_probability": None,	# can be None in original script, ignoring for now
-		"satelite": None				# can be None in original script, ignoring for now
+		"escore"                : escore,
+		"escore_mts"            : None,	# screw this
+		"coverage"              : len(resultSequences)/len(sequences),
+		"loop_index"            : loopIndex,
+		"pair_completness"      : None,
+		"graph_file"            : None,
+		"oriented_sequences"    : None,
+		"vcount"                : None,
+		"ecount"                : None,
+		"satellite_probability" : None,	# can be None in original script, ignoring for now
+		"satelite"              : None	# can be None in original script, ignoring for now
 	}
 
 	return graphInfo
