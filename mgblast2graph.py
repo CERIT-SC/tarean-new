@@ -49,7 +49,7 @@ def mgblast2graph(blastFileName, seqFileName,
 	if not graph.is_connected():	# sequences are not filtered?
 		graph, blastEntries = getLargestComponent(graph, blastEntries)
 
-	spanningTree = graph.spanning_tree()
+	spanningTree = graph.spanning_tree(weights = [edge["weight"] for edge in graph.es])
 	# original script tries to make alternative spanning trees here
 	# in case that "suboptimal solution is found", ignoring for now
 
@@ -477,7 +477,7 @@ if __name__ == '__main__':
 	params["outputSeqFileName"] = "output-data/sequences.fasta"
 
 	result = mgblast2graph(**params)
-	
+
 	print()
 	for key in sorted(result.keys()):
 		print(key, ":", result[key])
