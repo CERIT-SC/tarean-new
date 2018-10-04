@@ -7,7 +7,6 @@ import collections
 import math
 import random
 import copy
-import pprint
 
 import igraph
 from PIL import Image	# Pillow library
@@ -478,4 +477,8 @@ if __name__ == '__main__':
 	params["outputSeqFileName"] = "output-data/sequences.fasta"
 
 	result = mgblast2graph(**params)
-	pprint.pprint(result)
+	
+	print()
+	for key in sorted(result.keys()):
+		print(key, ":", result[key])
+	print()
