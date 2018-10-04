@@ -391,6 +391,7 @@ def switchReversed(blastEntries, reverseComplements):
 
 	return similarityTable, notfit
 
+
 def createResultGraph(similarityTable, notfit, reverseComplements):
 	"""Creates graph from vertices, that are not in nofit
 	and edges among those vertices
