@@ -53,7 +53,7 @@ def mgblast2graph(blastFileName, seqFileName,
 	# original script tries to make alternative spanning trees here
 	# in case that "suboptimal solution is found", ignoring for now
 
-	reverseComplements = {int(edge["name"]) for edge in getNegativeEdgeVertices(spanningTree)}
+	reverseComplements = {int(vertex["name"]) for vertex in getNegativeEdgeVertices(spanningTree)}
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
