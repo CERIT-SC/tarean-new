@@ -11,6 +11,8 @@ import copy
 import igraph
 from PIL import Image	# Pillow library
 
+from pprint import pprint
+
 ## TYPE DEFINITIONS ##
 
 # BLASTn output format 6: http://www.metagenomics.wiki/tools/blast/blastn-output-format-6
@@ -54,7 +56,9 @@ def mgblast2graph(blastFileName, seqFileName,
 	# in case that "suboptimal solution is found", ignoring for now
 
 	reverseComplements = {int(vertex["name"]) for vertex in getNegativeEdgeVertices(spanningTree)}
+	print("reverseComplements:", reverseComplements, "\n")
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
+	print("notfit:", notfit)
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
 	clusters    = resultGraph.clusters(mode = "STRONG")
@@ -65,25 +69,27 @@ def mgblast2graph(blastFileName, seqFileName,
 
 	# GRAPH INFO COMPUTATION
 	# escore is sum of entries with sign 1 divided by all entries
-	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
-	coverage = len(resultSequences)/len(sequences)
-	loopIndex = max([len(cluster) for cluster in clusters])/len(resultGraph.vs)
+	# escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
+	# coverage = len(resultSequences)/len(sequences)
+	# loopIndex = max([len(cluster) for cluster in clusters])/len(resultGraph.vs)
 
-	graphInfo = {
-		"escore"                : escore,
-		"escore_mts"            : None,	# screw this
-		"coverage"              : coverage,
-		"loop_index"            : loopIndex,
-		"pair_completness"      : pairCompletnessIndex,
-		"graph_file"            : None,	# ignoring for now
-		"oriented_sequences"    : outputSeqFileName,
-		"vcount"                : len(resultGraph.vs),
-		"ecount"                : len(resultGraph.es),
-		"satellite_probability" : None,	# can be None in original script, ignoring for now
-		"satelite"              : None	# can be None in original script, ignoring for now
-	}
+	# graphInfo = {
+	# 	"escore"                : escore,
+	# 	"escore_mts"            : None,	# screw this
+	# 	"coverage"              : coverage,
+	# 	"loop_index"            : loopIndex,
+	# 	"pair_completness"      : pairCompletnessIndex,
+	# 	"graph_file"            : None,	# ignoring for now
+	# 	"oriented_sequences"    : outputSeqFileName,
+	# 	"vcount"                : len(resultGraph.vs),
+	# 	"ecount"                : len(resultGraph.es),
+	# 	"satellite_probability" : None,	# can be None in original script, ignoring for now
+	# 	"satelite"              : None	# can be None in original script, ignoring for now
+	# }
 
-	return graphInfo
+	# return graphInfo
+	return {}
+	
 		
 
 def loadBlastData(blastFileName):
@@ -359,6 +365,7 @@ def depthFirstSearch(graph, startVertexNumber):
 			vertex = graph.vs[vertexNum]
 			neighbors = [(neighbor.index, vertexNum) for neighbor in vertex.neighbors()]
 			stack = neighbors + stack
+
 
 # the approach to find what sequences to switch is kind of weird and I think
 # there are better ways that finds better results
