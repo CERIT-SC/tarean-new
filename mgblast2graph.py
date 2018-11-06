@@ -56,9 +56,7 @@ def mgblast2graph(blastFileName, seqFileName,
 	# in case that "suboptimal solution is found", ignoring for now
 
 	reverseComplements = {int(vertex["name"]) for vertex in getNegativeEdgeVertices(spanningTree)}
-	print("reverseComplements:", reverseComplements, "\n")
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
-	print("notfit:", notfit)
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
 	clusters    = resultGraph.clusters(mode = "STRONG")
@@ -374,9 +372,6 @@ def depthFirstSearch(graph, startVertexNumber):
 			stack = neighbors + stack
 
 
-# the approach to find what sequences to switch is kind of weird and I think
-# there are better ways that finds better results
-# THE SOLUTION HERE YIELDS SUBOPTIMAL RESULTS
 def switchReversed(blastEntries, reverseComplements):
 	similarityTable = []
 	notfit = set()
