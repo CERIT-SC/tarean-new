@@ -67,26 +67,25 @@ def mgblast2graph(blastFileName, seqFileName,
 
 	# GRAPH INFO COMPUTATION
 	# escore is sum of entries with sign 1 divided by all entries
-	# escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
-	# coverage = len(resultSequences)/len(sequences)
-	# loopIndex = max([len(cluster) for cluster in clusters])/len(resultGraph.vs)
+	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
+	coverage = len(resultSequences)/len(sequences)
+	loopIndex = max([len(cluster) for cluster in clusters])/len(resultGraph.vs)
 
-	# graphInfo = {
-	# 	"escore"                : escore,
-	# 	"escore_mts"            : None,	# screw this
-	# 	"coverage"              : coverage,
-	# 	"loop_index"            : loopIndex,
-	# 	"pair_completness"      : pairCompletnessIndex,
-	# 	"graph_file"            : None,	# ignoring for now
-	# 	"oriented_sequences"    : outputSeqFileName,
-	# 	"vcount"                : len(resultGraph.vs),
-	# 	"ecount"                : len(resultGraph.es),
-	# 	"satellite_probability" : None,	# can be None in original script, ignoring for now
-	# 	"satelite"              : None	# can be None in original script, ignoring for now
-	# }
+	graphInfo = {
+		"escore"                : escore,
+		"escore_mts"            : None,	# screw this
+		"coverage"              : coverage,
+		"loop_index"            : loopIndex,
+		"pair_completness"      : pairCompletnessIndex,
+		"graph_file"            : None,	# ignoring for now
+		"oriented_sequences"    : outputSeqFileName,
+		"vcount"                : len(resultGraph.vs),
+		"ecount"                : len(resultGraph.es),
+		"satellite_probability" : None,	# can be None in original script, ignoring for now
+		"satelite"              : None	# can be None in original script, ignoring for now
+	}
 
-	# return graphInfo
-	return {}
+	return graphInfo
 	
 		
 
