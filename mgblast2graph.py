@@ -434,7 +434,7 @@ def alterSequences(sequences, reverseComplements, notfit):
 		if seqID in notfit: continue
 		if seqID in reverseComplements:
 			bases = list(seqData)
-			bases = reversed((complMap[base] for base in bases))
+			bases = reversed([complMap[base] for base in bases])
 			seqData = "".join(bases)
 
 		result.append(Sequence(str(seqID), seqData))
