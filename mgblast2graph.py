@@ -337,6 +337,7 @@ def getNegativeEdgeVertices(spanningTree):
 	"""
 	
 	result = []
+	spanningTree = spanningTree.copy()
 
 	for vertex, parent in depthFirstSearch(spanningTree, 0):
 		if vertex == parent: continue	# ignoring root of the search
@@ -344,6 +345,12 @@ def getNegativeEdgeVertices(spanningTree):
 		edge = spanningTree.es.select(_between = ((vertex,),(parent,)))[0]
 		if edge["sign"] == -1:
 			result.append(spanningTree.vs[vertex])
+
+			# because the resulting vertex would be switched, switching all 
+			# edges connected to it
+			edges = list(spanningTree.es.select(_source = vertex))
+			edges += list(spanningTree.es.select(_target = vertex))
+			for edge in edges: edge["sign"] *= -1
 		
 	return result
 
