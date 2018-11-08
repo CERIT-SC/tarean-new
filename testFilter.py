@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import igraph
+import re
 
 from mgblast2graph import *
 
@@ -30,4 +31,15 @@ blastEntries = filterBlastEntries(blastEntries)
 reverseComplements = {int(vertex["name"]) for vertex in getNegativeEdgeVertices(spanningTree)}
 print("reverseComplements:", reverseComplements, "\n")
 similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
-print("notfit:", notfit)
+# print("notfit:", notfit)
+
+
+
+# comparison with R results
+with open("testFilterData/flipNamesResult.txt") as file:
+    fileData = file.read()
+
+flipNamesRegEx = re.compile(r"\"(\d+?)\"")
+flipNames = {int(x) for x in flipNamesRegEx.findall(fileData)}
+print("flipNames:", flipNames, "\n")
+print("Comparison:", reverseComplements == flipNames)
