@@ -29,9 +29,11 @@ blastEntries = filterBlastEntries(blastEntries)
 
 
 reverseComplements = {int(vertex["name"]) for vertex in getNegativeEdgeVertices(spanningTree)}
-print("reverseComplements:", reverseComplements, "\n")
+# print("reverseComplements:", reverseComplements, "\n")
 similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
 # print("notfit:", notfit)
+from pprint import pprint
+pprint([x for x in similarityTable if x.sign == - 1])
 
 
 
@@ -41,5 +43,12 @@ with open("testFilterData/flipNamesResult.txt") as file:
 
 flipNamesRegEx = re.compile(r"\"(\d+?)\"")
 flipNames = {int(x) for x in flipNamesRegEx.findall(fileData)}
-print("flipNames:", flipNames, "\n")
-print("Comparison:", reverseComplements == flipNames)
+# print("flipNames:", flipNames, "\n")
+# print("Comparison:", reverseComplements == flipNames)
+
+
+resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
+clusters    = resultGraph.clusters(mode = "STRONG")
+saveGraphPicture(resultGraph, createLayout(resultGraph), "result.png", "thumb.png")
+
+# print(clusters)
