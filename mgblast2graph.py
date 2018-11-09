@@ -405,7 +405,7 @@ def createResultGraph(similarityTable, notfit, reverseComplements):
 	and edges among those vertices
 	"""
 
-	graph = igraph.Graph(directed = False)
+	graph = igraph.Graph(directed = True)
 	vertices = {entry.seq1 for entry in similarityTable} | \
 			   {entry.seq2 for entry in similarityTable}
 	vertices -= notfit
