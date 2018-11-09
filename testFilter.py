@@ -31,18 +31,26 @@ blastEntries = filterBlastEntries(blastEntries)
 reverseComplements = {int(vertex["name"]) for vertex in getNegativeEdgeVertices(spanningTree)}
 # print("reverseComplements:", reverseComplements, "\n")
 similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
-# print("notfit:", notfit)
-from pprint import pprint
-pprint([x for x in similarityTable if x.sign == - 1])
+
+# test for similarity table correctness
+df2 = []
+with open("testFilterData/df2.txt") as file:
+    for line in file:
+        line = line.split()
+        df2.append(SimilarityEntry(seq1 = int(line[1]), seq2 = int(line[2]), sign = int(line[4])))
+
+similarityTable = set(similarityTable)
+df2 = set(df2)
+# print(df2 == similarityTable)
 
 
 
 # comparison with R results
-with open("testFilterData/flipNamesResult.txt") as file:
-    fileData = file.read()
+# with open("testFilterData/flipNamesResult.txt") as file:
+#     fileData = file.read()
 
-flipNamesRegEx = re.compile(r"\"(\d+?)\"")
-flipNames = {int(x) for x in flipNamesRegEx.findall(fileData)}
+# flipNamesRegEx = re.compile(r"\"(\d+?)\"")
+# flipNames = {int(x) for x in flipNamesRegEx.findall(fileData)}
 # print("flipNames:", flipNames, "\n")
 # print("Comparison:", reverseComplements == flipNames)
 
@@ -52,3 +60,5 @@ clusters    = resultGraph.clusters(mode = "STRONG")
 saveGraphPicture(resultGraph, createLayout(resultGraph), "result.png", "thumb.png")
 
 # print(clusters)
+
+
