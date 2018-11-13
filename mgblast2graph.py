@@ -60,9 +60,7 @@ def mgblast2graph(blastFileName, seqFileName,
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
 	clusters    = resultGraph.clusters(mode = "STRONG")
-	print(clusters)
 	membership  = vertexToClusterMembership(clusters)
-	print(membership)
 
 	resultSequences = alterSequences(sequences, reverseComplements, notfit)
 	saveSequencesAndClusterData(resultSequences, resultGraph, membership, outputSeqFileName)
