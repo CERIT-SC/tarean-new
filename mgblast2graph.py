@@ -466,10 +466,10 @@ def saveSequencesAndClusterData(sequences, resultGraph, membership, fileName):
 	clusterSizes = sorted(counter.items(), key = lambda x: x[1], reverse = True)
 	for newIndex, clusterInfo in enumerate(clusterSizes, start = 1):
 		sortMap[clusterInfo[0]] = newIndex
-		
+
 
 	with open(fileName, "w", encoding = "utf8") as file:
-		for seq in sequences:	# sekvence je potřeba prvně profiltrovat
+		for seq in sequences:	# does sequences have to be filtered?
 			vertexIndex = resultGraph.vs.find(seq.description).index
 			clusterIndex = sortMap[membership[vertexIndex]]
 			file.write("".join((">", seq.description, " ", str(clusterIndex), "\n")))
