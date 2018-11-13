@@ -60,7 +60,9 @@ def mgblast2graph(blastFileName, seqFileName,
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
 	clusters    = resultGraph.clusters(mode = "STRONG")
+	print(clusters)
 	membership  = vertexToClusterMembership(clusters)
+	print(membership)
 
 	resultSequences = alterSequences(sequences, reverseComplements, notfit)
 	saveSequencesAndClusterData(resultSequences, resultGraph, membership, outputSeqFileName)
@@ -455,10 +457,23 @@ def vertexToClusterMembership(clusters):
 def saveSequencesAndClusterData(sequences, resultGraph, membership, fileName):
 	"""Saves sequences with info about cluster they belong to"""
 
+	# creating sort map - sorts clusters by size
+	# this is solely for mimicking the exact result of original R version
+	# that saves biggest clusters with smallest cluster indexes
+	sortMap = {}
+	counter = collections.defaultdict(int)	# counting how many vertices each cluster has
+	for vertex in membership:
+		counter[membership[vertex]] += 1
+
+	clusterSizes = sorted(counter.items(), key = lambda x: x[1], reverse = True)
+	for newIndex, clusterInfo in enumerate(clusterSizes, start = 1):
+		sortMap[clusterInfo[0]] = newIndex
+		
+
 	with open(fileName, "w", encoding = "utf8") as file:
 		for seq in sequences:	# sekvence je potřeba prvně profiltrovat
 			vertexIndex = resultGraph.vs.find(seq.description).index
-			clusterIndex = membership[vertexIndex]
+			clusterIndex = sortMap[membership[vertexIndex]]
 			file.write("".join((">", seq.description, " ", str(clusterIndex), "\n")))
 			file.write(seq.sequence + "\n")
 
