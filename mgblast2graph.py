@@ -273,7 +273,7 @@ def createGraph(sequences, blastEntries):
 
 
 def createLayout(graph):
-	if graph.ecount() < 2_000_000:
+	if graph.ecount() < 2000000:
 		# missing OGDF computation
 		# original script methods.R line 921, 922
 		# ignored for now, because of the need to create interface for C++
@@ -520,7 +520,7 @@ if __name__ == '__main__':
 	params["blastFileName"]     = inputFolder + "blast.csv"
 	params["seqFileName"]       = inputFolder + "reads.fas"
 	params["maxSampleVertices"] = 40000
-	params["maxSampleEdges"]    = 20_000_000
+	params["maxSampleEdges"]    = 20000000
 	params["pictureName"]       = "output-data/graphPicture.png"
 	params["thumbnailName"]     = "output-data/graphThumbnail.png"
 	params["paired"]            = True
