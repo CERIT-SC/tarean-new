@@ -83,7 +83,7 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 		"ecount"                : len(resultGraph.es),
 		"satellite_probability" : None,	# can be None in original script, ignoring for now
 		"satelite"              : None	# can be None in original script, ignoring for now
-				# satelite probability is being computed by R specific functions from R specific file
+			# satelite probability is being computed by R specific functions from R specific file
 	}
 
 	return graphInfo
