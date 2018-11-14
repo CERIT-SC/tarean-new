@@ -73,7 +73,7 @@ def mgblast2graph(blastFileName, seqFileName,
 
 	graphInfo = {
 		"escore"                : escore,
-		"escore_mts"            : None,	# screw this
+		"escore_mts"            : escoreMstComputation(spanningTree),
 		"coverage"              : coverage,
 		"loop_index"            : loopIndex,
 		"pair_completness"      : pairCompletnessIndex,
@@ -350,6 +350,33 @@ def getNegativeEdgeVertices(spanningTree):
 			for edge in edges: edge["sign"] *= -1
 		
 	return result
+
+
+def escoreMstComputation(spanningTree):
+	"""Returns sum of all altered edges divided by their amount.
+	Not sure what mst means in R version.
+
+	This function uses the same algotithm as getNegativeEdgeVertices
+	to create altered spanning tree.
+	This of course is bad design to repeat similar algorithm twice and
+	should be redone in next iteration.
+	"""
+	
+	spanningTree = spanningTree.copy()
+
+	for vertex, parent in depthFirstSearch(spanningTree, 0):
+		if vertex == parent: continue	# ignoring root of the search
+
+		edge = spanningTree.es.select(_between = ((vertex,),(parent,)))[0]
+		if edge["sign"] == -1:
+
+			# because the resulting vertex would be switched, switching all 
+			# edges connected to it
+			edges = list(spanningTree.es.select(_source = vertex))
+			edges += list(spanningTree.es.select(_target = vertex))
+			for edge in edges: edge["sign"] *= -1
+		
+	return sum([edge["sign"] for edge in spanningTree.es])/len(spanningTree.es)
 
 
 def depthFirstSearch(graph, startVertexNumber):
