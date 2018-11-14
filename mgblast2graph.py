@@ -506,7 +506,7 @@ def saveSequencesAndClusterData(sequences, resultGraph, membership, fileName):
 
 
 if __name__ == '__main__':
-	"""Run the code on sample data"""
+	"""Run the code for testing purposes on sample data"""
 
 	#doctesting
 	import doctest
