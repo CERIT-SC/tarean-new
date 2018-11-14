@@ -29,10 +29,10 @@ class FileError(Exception): pass
 
 ## FUNCTIONS ##
 
-def mgblast2graph(blastFileName, seqFileName,
-				  maxSampleVertices, maxSampleEdges,
-				  pictureName, thumbnailName, outputSeqFileName,
-				  paired):
+def mgblast2graph(blastFileName: str, seqFileName: str,
+				  maxSampleVertices: int, maxSampleEdges: int,
+				  pictureName: str, thumbnailName: str, outputSeqFileName: str,
+				  paired: bool):
 	blastEntries = loadBlastData(blastFileName)
 	blastEntries = filterBlastEntries(blastEntries)
 	sequences    = loadSequences(seqFileName)
