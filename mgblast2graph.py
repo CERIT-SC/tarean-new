@@ -13,7 +13,6 @@ import os.path
 import igraph
 from PIL import Image	# Pillow library
 
-from pprint import pprint
 
 ## TYPE DEFINITIONS ##
 
