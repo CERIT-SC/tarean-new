@@ -7,6 +7,8 @@ import collections
 import math
 import random
 import copy
+import os
+import os.path
 
 import igraph
 from PIL import Image	# Pillow library
@@ -33,6 +35,8 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 				  maxSampleVertices: int, maxSampleEdges: int,
 				  pictureName: str, thumbnailName: str, outputSeqFileName: str,
 				  paired: bool):
+	createFoldersForFiles(pictureName, thumbnailName, outputSeqFileName)
+
 	blastEntries = loadBlastData(blastFileName)
 	blastEntries = filterBlastEntries(blastEntries)
 	sequences    = loadSequences(seqFileName)
@@ -87,7 +91,13 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 	}
 
 	return graphInfo
-	
+
+
+
+def createFoldersForFiles(*filePaths):
+	for path in set(map(os.path.dirname, filePaths)):
+		if os.path.exists(path): continue
+		os.makedirs(path)
 		
 
 def loadBlastData(blastFileName):
