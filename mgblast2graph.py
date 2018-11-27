@@ -41,7 +41,7 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 	sequences    = loadSequences(seqFileName)
 
 	# compute pair complettness index before sampling
-	pairCompletnessIndex    = getPairCompletnessIndex(sequences) if paired else 0
+	pairCompletenessIndex    = getPairCompletenessIndex(sequences) if paired else 0
 	sequences, blastEntries = createSample(sequences, blastEntries,
 										   maxSampleVertices, maxSampleEdges)
 
@@ -79,7 +79,7 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 		"escore_mts"            : escoreMstComputation(spanningTree),
 		"coverage"              : coverage,
 		"loop_index"            : loopIndex,
-		"pair_completness"      : pairCompletnessIndex,
+		"pair_completeness"     : pairCompletenessIndex,
 		"graph_file"            : None,	# ignoring for now
 		"oriented_sequences"    : outputSeqFileName,
 		"vcount"                : len(resultGraph.vs),
@@ -196,7 +196,7 @@ def loadSequences(seqFileName):
 	return result
 
 
-def getPairCompletnessIndex(sequences):
+def getPairCompletenessIndex(sequences):
 	"""Compute portion of broken read pairs
 
 	P = Nc/(Nc + Ni)
