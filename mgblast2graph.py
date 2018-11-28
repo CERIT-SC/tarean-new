@@ -69,14 +69,16 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 	resultSequences = alterSequences(sequences, reverseComplements, notfit)
 	saveSequencesAndClusterData(resultSequences, resultGraph, membership, outputSeqFileName)
 
-	# calculate satellite probability
-	satelliteModel = loadSatelliteModel(satelliteModelFile)
-
 	# GRAPH INFO COMPUTATION
 	# escore is sum of entries with sign 1 divided by all entries
 	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
 	coverage = len(resultSequences)/len(sequences)
 	loopIndex = max([len(cluster) for cluster in clusters])/len(resultGraph.vs)
+
+	# calculate satellite probability
+	satelliteModel = loadSatelliteModel(satelliteModelFile)
+	sattProb, isSatt = getSattInfo(satelliteModel, loopIndex, pairCompletenessIndex)
+		# warning: isSatt has values "Putative Satellite"/"" not True/False
 
 	graphInfo = {
 		"escore"                : escore,
@@ -88,9 +90,8 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 		"oriented_sequences"    : outputSeqFileName,
 		"vcount"                : len(resultGraph.vs),
 		"ecount"                : len(resultGraph.es),
-		"satellite_probability" : None,	# can be None in original script, ignoring for now
-		"satellite"             : None	# can be None in original script, ignoring for now
-			# satelite probability is being computed by R specific functions from R specific file
+		"satellite_probability" : sattProb,
+		"satellite"             : isSatt
 	}
 
 	return graphInfo
@@ -537,6 +538,25 @@ def loadSatelliteModel(satelliteModelFile):
 				matrix[lineIndex, columnIndex] = float(value)
 
 	return matrix, cutoff
+
+
+def getSattInfo(satelliteModel, loopIndex, pairCompletenessIndex):
+	x, y = loopIndex, pairCompletenessIndex
+	matrix, cutoff = satelliteModel
+
+	# sattelite probability
+	N = int(math.sqrt(len(matrix)))	# number of lines or columns
+	i = round(x * (N - 1)) + 1		# rescaling params for matrix
+	j = round(y * (N - 1)) + 1
+	sattProb = matrix[i, j]
+
+	# is sattelite
+	if sattProb > cutoff:
+		isSatt = "Putative Satellite"
+	else:
+		isSatt = ""
+
+	return sattProb, isSatt
 
 
 
