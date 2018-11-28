@@ -69,6 +69,9 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 	resultSequences = alterSequences(sequences, reverseComplements, notfit)
 	saveSequencesAndClusterData(resultSequences, resultGraph, membership, outputSeqFileName)
 
+	# calculate satellite probability
+	satelliteModel = loadSatelliteModel(satelliteModelFile)
+
 	# GRAPH INFO COMPUTATION
 	# escore is sum of entries with sign 1 divided by all entries
 	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
@@ -512,6 +515,28 @@ def saveSequencesAndClusterData(sequences, resultGraph, membership, fileName):
 			clusterIndex = sortMap[membership[vertexIndex]]
 			file.write("".join((">", seq.description, " ", str(clusterIndex), "\n")))
 			file.write(seq.sequence + "\n")
+
+
+def loadSatelliteModel(satelliteModelFile):
+	with open(satelliteModelFile, "r", encoding = "utf8") as file:
+		# get cutoff
+		line = file.readline()
+		if "cutoff" not in line[:6]:
+			raise ValueError("Incorrect data in satelliteModelFile")
+		cutoff = float(line.split("=")[1])
+		
+		# ignore description in file
+		for line in file:
+			if "probability_matrix" in line: break
+
+		# get probability matrix
+		matrix = {}
+		for lineIndex, line in enumerate(file, start = 1):
+			line = line.split()
+			for columnIndex, value in enumerate(line, start = 1):
+				matrix[lineIndex, columnIndex] = float(value)
+
+	return matrix, cutoff
 
 
 
