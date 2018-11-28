@@ -32,8 +32,9 @@ class FileError(Exception): pass
 
 def mgblast2graph(blastFileName: str, seqFileName: str,
 				  maxSampleVertices: int, maxSampleEdges: int,
-				  pictureName: str, thumbnailName: str, outputSeqFileName: str,
-				  paired: bool):
+				  paired: bool, satelliteModelFile: str,
+				  pictureName: str, thumbnailName: str, outputSeqFileName: str):
+
 	createFoldersForFiles(pictureName, thumbnailName, outputSeqFileName)
 
 	blastEntries = loadBlastData(blastFileName)
@@ -525,15 +526,18 @@ if __name__ == '__main__':
 
 	#set params
 	params = {}
-	inputFolder = "input-data/"
-	params["blastFileName"]     = inputFolder + "blast.csv"
-	params["seqFileName"]       = inputFolder + "reads.fas"
-	params["maxSampleVertices"] = 40000
-	params["maxSampleEdges"]    = 20000000
-	params["pictureName"]       = "output-data/graphPicture.png"
-	params["thumbnailName"]     = "output-data/graphThumbnail.png"
-	params["paired"]            = True
-	params["outputSeqFileName"] = "output-data/sequences.fasta"
+	inputFolder  = "input-data/"
+	outputFolder = "output-data/"
+
+	params["blastFileName"]      = inputFolder + "blast.csv"
+	params["seqFileName"]        = inputFolder + "reads.fas"
+	params["satelliteModelFile"] = inputFolder + "satellite_model.txt"
+	params["maxSampleVertices"]  = 40000
+	params["maxSampleEdges"]     = 20000000
+	params["paired"]             = True
+	params["pictureName"]        = outputFolder + "graphPicture.png"
+	params["thumbnailName"]      = outputFolder + "graphThumbnail.png"
+	params["outputSeqFileName"]  = outputFolder + "sequences.fasta"
 
 	result = mgblast2graph(**params)
 
