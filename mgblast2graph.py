@@ -59,7 +59,7 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 	# original script tries to make alternative spanning trees here
 	# in case that "suboptimal solution is found", ignoring for now
 
-	reverseComplements = {int(vertex["name"]) for vertex in getNegativeEdgeVertices(spanningTree)}
+	reverseComplements = {vertex["name"] for vertex in getNegativeEdgeVertices(spanningTree)}
 	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
@@ -118,8 +118,8 @@ def loadBlastData(blastFileName):
 				raise FileError("Incorrect sign in blast file")
 
 			entry = BlastEntry(
-					query    = int(values[0]),
-					subject  = int(values[1]),
+					query    = values[0],		# ID of sequence has to be string in order to 
+					subject  = values[1],		# allow for paired information
 					weight   = float(values[2]),
 
 					q_length = int(values[3]),
@@ -193,7 +193,7 @@ def loadSequences(seqFileName):
 
 			#ACGT test
 			letters = set(line2)
-			if letters - {"A", "C", "G", "T"}:
+			if letters - {"A", "C", "G", "T", "N"}:
 				raise FileError("Incorrect sequence data")
 
 			result.append(Sequence(description = line1[1:], sequence = line2))
@@ -242,9 +242,9 @@ def createSample(sequences, blastEntries, maxVertices, maxEdges):
 	sequences = random.sample(sequences, sampleSize)
 
 	filteredEntries = []
-	seqNumbers = {int(seq.description) for seq in sequences}
+	seqIDs = {seq.description for seq in sequences}
 	for blastEntry in blastEntries:
-		if blastEntry.query in seqNumbers and blastEntry.subject in seqNumbers:
+		if blastEntry.query in seqIDs and blastEntry.subject in seqIDs:
 			filteredEntries.append(blastEntry)
 
 	return sequences, filteredEntries
@@ -280,7 +280,7 @@ def createGraph(sequences, blastEntries):
 		graph.add_vertex(name = seq.description)
 
 	for entry in blastEntries:
-		graph.add_edge(str(entry.query), str(entry.subject), 
+		graph.add_edge(entry.query, entry.subject, 
 					   weight = entry.weight, sign = entry.sign)
 
 	return graph
@@ -453,11 +453,11 @@ def createResultGraph(similarityTable, notfit, reverseComplements):
 	vertices -= notfit
 	
 	for vertex in vertices:
-		graph.add_vertex(name = str(vertex), complement = vertex in reverseComplements)
+		graph.add_vertex(name = vertex, complement = vertex in reverseComplements)
 
 	for entry in similarityTable:
 		if entry.seq1 not in notfit and entry.seq2 not in notfit:
-			graph.add_edge(str(entry.seq1), str(entry.seq2), sign = entry.sign)
+			graph.add_edge(entry.seq1, entry.seq2, sign = entry.sign)
 	
 	return graph
 
@@ -466,10 +466,10 @@ def alterSequences(sequences, reverseComplements, notfit):
 	"""Removes nofit sequences and reverses reverse complements"""
 
 	result = []
-	complMap = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
+	complMap = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'N': 'N'}
 
 	for seq in sequences:
-		seqID = int(seq.description)
+		seqID = seq.description
 		seqData = seq.sequence
 
 		if seqID in notfit: continue
@@ -478,7 +478,7 @@ def alterSequences(sequences, reverseComplements, notfit):
 			bases = reversed([complMap[base] for base in bases])
 			seqData = "".join(bases)
 
-		result.append(Sequence(str(seqID), seqData))
+		result.append(Sequence(seqID, seqData))
 	return result
 
 
@@ -574,8 +574,8 @@ if __name__ == '__main__':
 	inputFolder  = "input-data/"
 	outputFolder = "output-data/"
 
-	params["blastFileName"]      = inputFolder + "blast.csv"
-	params["seqFileName"]        = inputFolder + "reads.fas"
+	params["blastFileName"]      = inputFolder + "blastPaired.csv"
+	params["seqFileName"]        = inputFolder + "readsPaired.fas"
 	params["satelliteModelFile"] = inputFolder + "satellite_model.txt"
 	params["maxSampleVertices"]  = 40000
 	params["maxSampleEdges"]     = 20000000
