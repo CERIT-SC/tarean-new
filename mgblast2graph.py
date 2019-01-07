@@ -76,8 +76,8 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 	loopIndex = max([len(cluster) for cluster in clusters])/len(resultGraph.vs)
 
 	# calculate satellite probability
-	satelliteModel = loadSatelliteModel(satelliteModelFile)
-	sattProb, isSatt = getSattInfo(satelliteModel, loopIndex, pairCompletenessIndex)
+	matrix, cutoff = loadSatelliteModel(satelliteModelFile)
+	sattProb = getSattProbability(matrix, loopIndex, pairCompletenessIndex)
 		# warning: isSatt has values "Putative Satellite"/"" not True/False
 
 	graphInfo = {
@@ -91,7 +91,7 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 		"vcount"                : len(resultGraph.vs),
 		"ecount"                : len(resultGraph.es),
 		"satellite_probability" : sattProb,
-		"satellite"             : isSatt
+		"satellite"             : "Putative Satellite" if sattProb > cutoff else ""
 	}
 
 	return graphInfo
@@ -540,23 +540,16 @@ def loadSatelliteModel(satelliteModelFile):
 	return matrix, cutoff
 
 
-def getSattInfo(satelliteModel, loopIndex, pairCompletenessIndex):
+def getSattProbability(matrix, loopIndex, pairCompletenessIndex):
 	x, y = loopIndex, pairCompletenessIndex
-	matrix, cutoff = satelliteModel
 
 	# sattelite probability
 	N = int(math.sqrt(len(matrix)))	# number of lines or columns
 	i = round(x * (N - 1)) + 1		# rescaling params for matrix
 	j = round(y * (N - 1)) + 1
-	sattProb = matrix[i, j]
+	probability = matrix[i, j]
 
-	# is sattelite
-	if sattProb > cutoff:
-		isSatt = "Putative Satellite"
-	else:
-		isSatt = ""
-
-	return sattProb, isSatt
+	return probability
 
 
 
