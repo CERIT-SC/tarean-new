@@ -459,16 +459,32 @@ def createResultGraph(similarityTable, notfit, reverseComplements):
 	"""
 
 	graph = igraph.Graph(directed = True)
+
+	# filtering vertices
 	vertices = {entry.seq1 for entry in similarityTable} | \
 			   {entry.seq2 for entry in similarityTable}
 	vertices -= notfit
 	
+	# creating vertices of graph
 	for vertex in vertices:
 		graph.add_vertex(name = vertex, complement = vertex in reverseComplements)
 
-	for entry in similarityTable:
-		if entry.seq1 not in notfit and entry.seq2 not in notfit:
-			graph.add_edge(entry.seq1, entry.seq2, sign = entry.sign)
+	# filtering edges
+	condition = lambda x: x.seq1 not in notfit and x.seq2 not in notfit
+	filteredTable = list(filter(condition, similarityTable))
+
+	# creating edges
+	graph.add_edges((entry.seq1, entry.seq2) for entry in filteredTable)
+
+	# adding sign to edges, using dict to find data faster
+	entryMap = {(entry.seq1, entry.seq2): entry for entry in filteredTable}
+	for edge in graph.es:
+		sourceName = graph.vs[edge.source]["name"]
+		targetName = graph.vs[edge.target]["name"]
+
+		entry = entryMap.get((sourceName, targetName)) or entryMap.get((targetName, sourceName))
+
+		edge["sign"] = entry.sign
 	
 	return graph
 
