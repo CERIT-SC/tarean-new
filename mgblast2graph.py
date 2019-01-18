@@ -276,13 +276,24 @@ def createGraph(sequences, blastEntries):
 
 	graph = igraph.Graph(directed = False)
 
+	# creaging vertices
 	for seq in sequences:
 		graph.add_vertex(name = seq.description)
 
-	for entry in blastEntries:
-		graph.add_edge(entry.query, entry.subject, 
-					   weight = entry.weight, sign = entry.sign)
+	# creating edges
+	graph.add_edges((entry.query, entry.subject) for entry in blastEntries)
 
+	# adding weight and sign to edges, using dict to find data faster
+	entryMap = {(entry.query, entry.subject): entry for entry in blastEntries}
+	for edge in graph.es:
+		sourceName = graph.vs[edge.source]["name"]
+		targetName = graph.vs[edge.target]["name"]
+
+		entry = entryMap.get((sourceName, targetName)) or entryMap.get((targetName, sourceName))
+
+		edge["weight"] = entry.weight
+		edge["sign"]   = entry.sign
+		
 	return graph
 
 
