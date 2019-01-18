@@ -42,7 +42,7 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 	sequences    = loadSequences(seqFileName)
 
 	# compute pair complettness index before sampling
-	pairCompletenessIndex    = getPairCompletenessIndex(sequences) if paired else 0
+	pairCompletenessIndex   = getPairCompletenessIndex(sequences) if paired else 0
 	sequences, blastEntries = createSample(sequences, blastEntries,
 										   maxSampleVertices, maxSampleEdges)
 
@@ -72,13 +72,13 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 
 	# GRAPH INFO COMPUTATION
 	# escore is sum of entries with sign 1 divided by all entries
-	escore = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
-	coverage = len(resultSequences)/len(sequences)
+	escore    = sum(entry.sign for entry in similarityTable if entry.sign == 1)/len(similarityTable)
+	coverage  = len(resultSequences)/len(sequences)
 	loopIndex = max([len(cluster) for cluster in clusters])/len(resultGraph.vs)
 
 	# calculate satellite probability
 	matrix, cutoff = loadSatelliteModel(satelliteModelFile)
-	sattProb = getSattProbability(matrix, loopIndex, pairCompletenessIndex)
+	sattProb       = getSattProbability(matrix, loopIndex, pairCompletenessIndex)
 
 	graphInfo = {
 		"escore"                : escore,
