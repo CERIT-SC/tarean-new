@@ -59,8 +59,9 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 	# original script tries to make alternative spanning trees here
 	# in case that "suboptimal solution is found", ignoring for now
 
-	reverseComplements = {vertex["name"] for vertex in getNegativeEdgeVertices(spanningTree)}
-	similarityTable, notfit = switchReversed(blastEntries, reverseComplements)
+	reverseVertices, mstEscore = reverseVertexSearch(spanningTree)
+	reverseComplements         = {vertex["name"] for vertex in reverseVertices}
+	similarityTable, notfit    = switchReversed(blastEntries, reverseComplements)
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
 	clusters    = resultGraph.clusters(mode = "STRONG")
@@ -78,11 +79,10 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 	# calculate satellite probability
 	matrix, cutoff = loadSatelliteModel(satelliteModelFile)
 	sattProb = getSattProbability(matrix, loopIndex, pairCompletenessIndex)
-		# warning: isSatt has values "Putative Satellite"/"" not True/False
 
 	graphInfo = {
 		"escore"                : escore,
-		"escore_mts"            : escoreMstComputation(spanningTree),
+		"escore_mts"            : mstEscore,
 		"coverage"              : coverage,
 		"loop_index"            : loopIndex,
 		"pair_completeness"     : pairCompletenessIndex,
@@ -354,55 +354,41 @@ def getLargestComponent(graph, blastEntries):
 	return biggestSubgraph, filteredEntries
 	
 
-def getNegativeEdgeVertices(spanningTree):
-	"""Returns a list of vertices, that are connected to a predecessor vertex
-	with a negative edge.
+def reverseVertexSearch(spanningTree):
+	""" Makes depth first search on spanning tree and searches for vertices,
+	that are connected to predecessor vertex with negative edge.
+	Vertex is saved and all edges connected to it are switched - like it has
+	been reverse complemented.
+
+	Returns:
+		- list of vertices, that are connected to a predecessor vertex with a negative edge
+		- mstEscore - sum of edge signs divided by number of edges (after all DFS changes)
 	"""
 	
-	result = []
+	reverseVertices = []
 	spanningTree = spanningTree.copy()
 
+	# building vertex to edge map for fast access
+	# calling spanningTree.es.select all the time is slow
+	vertexToEdgeMap = collections.defaultdict(list)
+	for edge in spanningTree.es:
+		vertexToEdgeMap[edge.source].append(edge)
+		vertexToEdgeMap[edge.target].append(edge)
+
+	# traversing graph
 	for vertex, parent in depthFirstSearch(spanningTree, 0):
 		if vertex == parent: continue	# ignoring root of the search
 
-		edge = spanningTree.es.select(_between = ((vertex,),(parent,)))[0]
+		# edge between vertex and parent
+		edge = list(set(vertexToEdgeMap[vertex]) & set(vertexToEdgeMap[parent]))[0]
 		if edge["sign"] == -1:
-			result.append(spanningTree.vs[vertex])
-
+			reverseVertices.append(spanningTree.vs[vertex])
 			# because the resulting vertex would be switched, switching all 
 			# edges connected to it
-			edges = list(spanningTree.es.select(_source = vertex))
-			edges += list(spanningTree.es.select(_target = vertex))
-			for edge in edges: edge["sign"] *= -1
+			for edge in vertexToEdgeMap[vertex]: edge["sign"] *= -1
 		
-	return result
-
-
-def escoreMstComputation(spanningTree):
-	"""Returns sum of all altered edges divided by their amount.
-	Not sure what mst means in R version.
-
-	This function uses the same algotithm as getNegativeEdgeVertices
-	to create altered spanning tree.
-	This of course is bad design to repeat similar algorithm twice and
-	should be redone in next iteration.
-	"""
-	
-	spanningTree = spanningTree.copy()
-
-	for vertex, parent in depthFirstSearch(spanningTree, 0):
-		if vertex == parent: continue	# ignoring root of the search
-
-		edge = spanningTree.es.select(_between = ((vertex,),(parent,)))[0]
-		if edge["sign"] == -1:
-
-			# because the resulting vertex would be switched, switching all 
-			# edges connected to it
-			edges = list(spanningTree.es.select(_source = vertex))
-			edges += list(spanningTree.es.select(_target = vertex))
-			for edge in edges: edge["sign"] *= -1
-		
-	return sum([edge["sign"] for edge in spanningTree.es])/len(spanningTree.es)
+	mstEscore = sum([edge["sign"] for edge in spanningTree.es])/len(spanningTree.es)
+	return reverseVertices, mstEscore
 
 
 def depthFirstSearch(graph, startVertexNumber):
