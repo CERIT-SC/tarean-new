@@ -9,6 +9,7 @@ import random
 import copy
 import os
 import os.path
+import random
 
 import igraph
 from PIL import Image	# Pillow library
@@ -352,6 +353,22 @@ def getLargestComponent(graph, blastEntries):
 			filteredEntries.append(entry)
 
 	return biggestSubgraph, filteredEntries
+
+
+def createSpanningTrees(graph):
+	"""Returns 6 spanning trees. One created from graph real weight data
+	and 5 created using random weights.
+	"""
+
+	random.seed(123)
+	realWeightTree = graph.spanning_tree(weights = [edge["weight"] for edge in graph.es])
+	spTrees = [realWeightTree]
+
+	for _ in range(5):
+		randomTree = graph.spanning_tree(weights = [random.uniform(0.1,1) for _ in graph.es])
+		spTrees.append(randomTree)
+
+	return spTrees
 	
 
 def reverseVertexSearch(spanningTree):
