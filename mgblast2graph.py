@@ -580,8 +580,8 @@ if __name__ == '__main__':
 	inputFolder  = "input-data/"
 	outputFolder = "output-data/"
 
-	params["blastFileName"]      = inputFolder + "blastPaired.csv"
-	params["seqFileName"]        = inputFolder + "readsPaired.fas"
+	params["blastFileName"]      = inputFolder + "blast163.csv"
+	params["seqFileName"]        = inputFolder + "reads163.fas"
 	params["satelliteModelFile"] = inputFolder + "satellite_model.txt"
 	params["maxSampleVertices"]  = 40000
 	params["maxSampleEdges"]     = 20000000
