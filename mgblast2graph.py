@@ -56,13 +56,22 @@ def mgblast2graph(blastFileName: str, seqFileName: str,
 	if not graph.is_connected():	# sequences are not filtered?
 		graph, blastEntries = getLargestComponent(graph, blastEntries)
 
-	spanningTree = graph.spanning_tree(weights = [edge["weight"] for edge in graph.es])
-	# original script tries to make alternative spanning trees here
-	# in case that "suboptimal solution is found", ignoring for now
+	treeVersions = []
+	for tree in createSpanningTrees(graph):
+		result = {}
+		reverseVertices, result["mstEscore"] = reverseVertexSearch(tree)
+		result["reverseComplements"] = {vertex["name"] for vertex in reverseVertices}
+		result["similarityTable"], result["notfit"] = switchReversed(blastEntries, result["reverseComplements"])
+		result["notfitProportion"] = len(result["notfit"])/len(tree.vs)
+		treeVersions.append(result)
 
-	reverseVertices, mstEscore = reverseVertexSearch(spanningTree)
-	reverseComplements         = {vertex["name"] for vertex in reverseVertices}
-	similarityTable, notfit    = switchReversed(blastEntries, reverseComplements)
+	finalTree = min(treeVersions, key = lambda x: x["notfitProportion"])
+	del treeVersions
+
+	similarityTable    = finalTree["similarityTable"]
+	notfit             = finalTree["notfit"]
+	reverseComplements = finalTree["reverseComplements"]
+	mstEscore          = finalTree["mstEscore"]
 
 	resultGraph = createResultGraph(similarityTable, notfit, reverseComplements)
 	clusters    = resultGraph.clusters(mode = "STRONG")
